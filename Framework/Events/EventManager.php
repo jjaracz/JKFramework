@@ -10,4 +10,8 @@ class EventManager extends AbstractEventManager {
             $value->call();
         }
     }
+    
+    public function getEvents(){
+        return $this->events;
+    }
 }

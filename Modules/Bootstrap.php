@@ -3,9 +3,19 @@
 namespace Modules;
 
 use Framework\Bootstrap\AbstractBootstrap;
+use Framework\Route\RouteListener;
 
 class Bootstrap extends AbstractBootstrap {
     public function startApplication($request){
-        $this->getEventManager()->callEvents();
+        $eventManager = $this->getEventManager();
+        
+        if(!empty($eventManager->getEvents())){
+            $this->getEventManager()->callEvents();
+        }
+        
+        $config = include_once 'Modules/ApplicationConfig.php';
+        
+        $routeListener = new RouteListener($config['controller']);
+        $routeListener->listen($request);
     }   
 }
