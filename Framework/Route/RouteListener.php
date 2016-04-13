@@ -21,7 +21,7 @@ class RouteListener {
     public function parseRoute($request) {
         $basePath = (isset($this->controllersConfig['url_pre'])) ? $this->controllersConfig['url_pre'] : "";
         $data = explode("/", str_replace($basePath, "", $request));
-        
+
         $controller = null;
         $method = null;
         $additionalData = array();
@@ -43,30 +43,45 @@ class RouteListener {
         }
 
         $controller = (!empty($controller)) ? $controller : "/";
-        $controllerObject = $this->bindController($controller);
+
+        $controllerObject = $this->bindController($controller, $method);
     }
 
-    public function bindController($name) {
-        var_dump($name);
-        foreach($this->routeConfig as $value){
-            if($value['name'] === $name){ 
+    public function bindController($name, $method) {
+        foreach ($this->routeConfig as $value) {
+            if ($value['name'] === $name) {
                 $factory = $this->getControllerFactory();
                 $factory->setControllerConfig($this->controllersConfig);
-                $factory->create($value['controller']);
+                $controller = $factory->create($value['controller']);
+
+                if (isset($controller)) {
+                    if (isset($method)) {
+                        call_user_method($method . 'Action', $controller);
+                    } else {
+                        if (isset($value['action'])) {
+                            call_user_method($value['action'] . 'Action', $controller);
+                        } else {
+                            $controller->indexAction();
+                        }
+                    }
+                } else {
+                    throw new Exception("Kontroler nie istnieje ");
+                }
             }
         }
     }
-    
-    public function getControllerFactory(){
+
+    public function getControllerFactory() {
         $defaultControllerFactoryFromConfig = (isset($this->controllersConfig['DefaultFactory'])) ? $this->controllersConfig['DefaultFactory'] : null;
         $factory = null;
-        
-        if($defaultControllerFactoryFromConfig){
+
+        if ($defaultControllerFactoryFromConfig) {
             $factory = new $defaultControllerFactoryFromConfig();
         } else {
             $factory = new Framework\Mvc\Controller\Factory\DefaultControllerFactory;
         }
-        
+
         return $factory;
     }
+
 }
