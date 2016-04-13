@@ -15,7 +15,7 @@ class Bootstrap extends AbstractBootstrap {
         
         $config = include_once 'Modules/ApplicationConfig.php';
         
-        $routeListener = new RouteListener($config['controller']);
+        $routeListener = new RouteListener($config['controller'],$config['route']);
         $routeListener->listen($request);
     }   
 }
