@@ -10,10 +10,24 @@
         ),
         'route' => array(
             'default' => array(
+                'controller' => 'IndexController',       
+                'name' => '/',
+            ),
+            'ddes' => array(
                 'controller' => 'IndexController',
                 'action' => 'index',
-                'name' => '/'
+                'name' => 'dde'
+            )
+        ),
+        'view' => array(
+            'layout' => 'Modules/Application/Views/Layout/Layout.phtml',
+            'DefaultFactory' => 'Framework/Mvc/Model/Factory/DefaultViewFactory',
+            'path' => 'Modules/Application/Views',
+            'templates' => array(
+                'index' => array(
+                    'index' => 'index/index.phtml'
+                )
             )
         )
-    )
+    );
 ?>

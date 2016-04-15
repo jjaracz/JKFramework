@@ -13,7 +13,8 @@ abstract class AbstractController implements ControllerInterface {
     public function appendExtension($extension){
         
     }
+    
+    public function createViewModel(){
+        
+    }
 }
-/*
- * $indexController->identity();
- */

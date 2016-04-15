@@ -16,6 +16,8 @@ class RouteListener {
 
     public function listen($request) {
         $parsed = $this->parseRoute($request);
+        
+        return $parsed;
     }
 
     public function parseRoute($request) {
@@ -44,7 +46,9 @@ class RouteListener {
 
         $controller = (!empty($controller)) ? $controller : "/";
 
-        $controllerObject = $this->bindController($controller, $method);
+        $viewModel = $this->bindController($controller, $method);
+        
+        return $viewModel;
     }
 
     public function bindController($name, $method) {
@@ -56,12 +60,12 @@ class RouteListener {
 
                 if (isset($controller)) {
                     if (isset($method)) {
-                        call_user_method($method . 'Action', $controller);
+                        return call_user_method($method . 'Action', $controller);
                     } else {
                         if (isset($value['action'])) {
-                            call_user_method($value['action'] . 'Action', $controller);
+                            return call_user_method($value['action'] . 'Action', $controller);
                         } else {
-                            $controller->indexAction();
+                            return $controller->indexAction();
                         }
                     }
                 } else {
