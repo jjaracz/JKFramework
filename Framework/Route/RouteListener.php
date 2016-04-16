@@ -2,7 +2,7 @@
 
 namespace Framework\Route;
 
-use Framework\Route\Route;
+use Framework\Route\Router;
 
 class RouteListener {
 
@@ -16,60 +16,51 @@ class RouteListener {
 
     public function listen($request) {
         $parsed = $this->parseRoute($request);
-        
+
         return $parsed;
     }
 
     public function parseRoute($request) {
-        $basePath = (isset($this->controllersConfig['url_pre'])) ? $this->controllersConfig['url_pre'] : "";
-        $data = explode("/", str_replace($basePath, "", $request));
-
-        $controller = null;
-        $method = null;
-        $additionalData = array();
-
-        foreach ($data as $value) {
-            if (!$controller) {
-                $controller = $value;
-                continue;
-            }
-
-            if (!$method) {
-                $method = $value;
-                continue;
-            }
-
-            if ($controller && $method && !empty($value)) {
-                $additionalData[] = $value;
-            }
-        }
-
-        $controller = (!empty($controller)) ? $controller : "/";
-
-        $viewModel = $this->bindController($controller, $method);
+        $router = Router::getInstance();
+        $router->setUrlPre($this->controllersConfig['url_pre']);
         
+        $data = $router->parseRoute($request);
+
+        $viewModel = $this->bindController($data['controller'], $data['method']);
+
         return $viewModel;
     }
 
     public function bindController($name, $method) {
         foreach ($this->routeConfig as $value) {
             if ($value['name'] === $name) {
+                $router = Router::getInstance();
+                $router->setRouteConfig($value);
+                
                 $factory = $this->getControllerFactory();
                 $factory->setControllerConfig($this->controllersConfig);
                 $controller = $factory->create($value['controller']);
 
                 if (isset($controller)) {
                     if (isset($method)) {
-                        return call_user_method($method . 'Action', $controller);
+                        if (method_exists($controller, $method . 'Action')) {
+                            return call_user_func(array(&$controller, $method . 'Action'));
+                        } else {
+                            return $controller->indexAction();
+                        }
                     } else {
                         if (isset($value['action'])) {
-                            return call_user_method($value['action'] . 'Action', $controller);
+                            if (method_exists($controller, $method . 'Action')) {
+                                return call_user_func(array(&$controller, $value['action'] . 'Action'));
+                            } else {
+                                return $controller->indexAction();
+                            }
                         } else {
                             return $controller->indexAction();
                         }
                     }
                 } else {
-                    throw new Exception("Kontroler nie istnieje ");
+                    throw new \Exception("Kontroler nie istnieje ");
                 }
             }
         }

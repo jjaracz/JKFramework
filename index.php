@@ -1,4 +1,5 @@
 <?php
+
 include_once 'Framework/Autoloader/Autoloader.php';
 
 $loader = new AutoLoader();

@@ -1,12 +1,12 @@
 <?php
-    return array(
+    return array(      
         'controller' => array(
             'DefaultFactory' => 'Framework\Mvc\Controller\Factory\DefaultControllerFactory',
             'controllers_pre' => 'Modules\Application\Controllers',
             'controllers' => array(
                 'IndexController' => 'IndexController'
             ),
-            'url_pre' => '/sp/JKFramework/'
+            'url_pre' => '/JKFramework/',
         ),
         'route' => array(
             'default' => array(
@@ -16,12 +16,14 @@
             'ddes' => array(
                 'controller' => 'IndexController',
                 'action' => 'index',
-                'name' => 'dde'
+                'name' => 'dde',
+                'data' => array(
+                    'id' => 'number'
+                )
             )
         ),
         'view' => array(
             'layout' => 'Modules/Application/Views/Layout/Layout.phtml',
-            'DefaultFactory' => 'Framework/Mvc/Model/Factory/DefaultViewFactory',
             'path' => 'Modules/Application/Views',
             'templates' => array(
                 'index' => array(

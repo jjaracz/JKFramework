@@ -3,15 +3,13 @@
 namespace Modules\Application\Controllers;
 
 use Framework\Mvc\Controller\AbstractController;
-use Framework\Mvc\Model\ViewModel;
+use Framework\Mvc\Model\JsonModel;
 
 class IndexController extends AbstractController {
     public function indexAction() {
-        $view = new ViewModel();
+        $view = new JsonModel();
         
         $view->add('test', 'test');
-        
-        $view->setTemplate('index/index');
         
         return $view;
     }
